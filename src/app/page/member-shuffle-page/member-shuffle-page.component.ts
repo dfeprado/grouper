@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GroupService } from 'src/app/group.service';
 import { MembersService } from 'src/app/members.service';
 
@@ -13,7 +14,8 @@ export class MemberShufflePageComponent implements OnInit, OnDestroy {
   
   constructor(
     private members: MembersService,
-    private group: GroupService
+    private group: GroupService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -27,6 +29,7 @@ export class MemberShufflePageComponent implements OnInit, OnDestroy {
 
   done(): void {
     this.group.setGroups(this.shuffled);
+    this.router.navigate(['/groups']);
   }
 
   ngOnDestroy(): void {

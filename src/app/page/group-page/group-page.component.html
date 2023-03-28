@@ -1,0 +1,14 @@
+<h1>Grupos</h1>
+<p><a routerLink="/">Voltar para o início</a></p>
+<p><a routerLink="/member-shuffle">Voltar para o embaralhamento</a></p>
+
+<ul>
+    <li *ngFor="let group of group.groups">
+        <h2>Grupo {{group.id}}</h2>
+        <ol>
+            <li *ngFor="let member of group.members">
+                <span>{{member}}</span>
+            </li>
+        </ol>
+    </li>
+</ul>
