@@ -1,0 +1,11 @@
+<h1>Membros</h1>
+<button (click)="addMember()">Adicionar</button>
+<button>Sortear</button>
+<p><strong>Total de membros:</strong> {{members.count}}</p>
+<label for="groups">Grupos</label>&nbsp;<input id="groups" type="number" min="1" [(ngModel)]="members.perGroup">
+<p><strong>Total de pessoas por grupo:</strong> {{calculateMembersPerGroup()}}</p>
+<ul>
+    <li *ngFor="let member of members.list; let i=index">
+        <span>{{member}} <button (click)="remove(i, member)">Remover</button></span>
+    </li>
+</ul>
