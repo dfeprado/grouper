@@ -1,0 +1,9 @@
+<h1>Embaralhando os membros</h1>
+<p>Pressione o botão abaixo quando estiver satisfeito</p>
+<a routerLink="/">Voltar</a>
+<button (click)="done()">Pronto</button>
+<ul>
+    <li *ngFor="let member of shuffled">
+        <span>{{member}}</span>
+    </li>
+</ul>

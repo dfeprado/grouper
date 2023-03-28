@@ -24,4 +24,8 @@ export class GroupService {
   constructor(private members: MembersService) {
     this._groupsCount = Number(localStorage.getItem(this.membersPerGroupStorageKey)) || 1;
   }
+
+  setGroups(shuffledMembers: string[]): void {
+    console.log(shuffledMembers);
+  }
 }
