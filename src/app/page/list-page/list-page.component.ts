@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { GroupService } from 'src/app/group.service';
 import { MembersService } from 'src/app/members.service';
 
 @Component({
@@ -8,7 +9,10 @@ import { MembersService } from 'src/app/members.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListPageComponent {
-  constructor(public members: MembersService) {}
+  constructor(
+    public members: MembersService,
+    public group: GroupService
+  ) {}
   
   addMember(): void {
     const member = prompt('Qual é o nome do membro?');
@@ -23,9 +27,5 @@ export class ListPageComponent {
       return;
 
     this.members.remove(idx);
-  }
-
-  calculateMembersPerGroup(): number {
-    return this.members.count/this.members.perGroup;
   }
 }

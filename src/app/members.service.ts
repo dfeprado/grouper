@@ -7,15 +7,11 @@ export class MembersService {
   private membersStorageKey = 'MEMBERS';
   private members: string[];
 
-  private membersPerGroupStorageKey = 'MEMBERS_PER_GROUP';
-  private membersPerGroup: number;
-
   constructor() {
     const membersString = localStorage.getItem(this.membersStorageKey);
 
     this.members = membersString ? JSON.parse(membersString) : [];
 
-    this.membersPerGroup = Number(localStorage.getItem(this.membersPerGroupStorageKey)) || 1;
   }
 
   get list(): string[] {
@@ -24,15 +20,6 @@ export class MembersService {
 
   get count(): number {
     return this.members.length;
-  }
-
-  get perGroup(): number {
-    return this.membersPerGroup;
-  }
-
-  set perGroup(value: number) {
-    this.membersPerGroup = value;
-    localStorage.setItem(this.membersPerGroupStorageKey, value.toString());
   }
 
   push(member: string): void {
