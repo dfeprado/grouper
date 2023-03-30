@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { GroupService } from 'src/app/group.service';
+import { Component } from '@angular/core';
+import { GroupService } from 'src/app/services/group/group.service';
 
 @Component({
   selector: 'grp-group-page',

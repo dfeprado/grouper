@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { GroupService } from 'src/app/group.service';
-import { MembersService } from 'src/app/members.service';
+import { GroupService } from 'src/app/services/group/group.service';
+import { MembersService } from 'src/app/services/members/members.service';
 
 @Component({
   selector: 'grp-list-page',

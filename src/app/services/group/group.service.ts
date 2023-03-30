@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MembersService } from './members.service';
+import { MembersService } from '../members/members.service';
 
 export interface Group {
   id: string;

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GroupService } from 'src/app/group.service';
-import { MembersService } from 'src/app/members.service';
+import { GroupService } from 'src/app/services/group/group.service';
+import { MembersService } from 'src/app/services/members/members.service';
 
 @Component({
   selector: 'grp-member-shuffle-page',
