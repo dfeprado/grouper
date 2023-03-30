@@ -5,7 +5,7 @@
 <label for="groups">Grupos</label>&nbsp;<input id="groups" type="number" min="1" [(ngModel)]="group.count">
 <p><strong>Total de pessoas por grupo:</strong> {{group.membersPerGroup}}</p>
 <ul>
-    <li *ngFor="let member of members.list; let i=index">
+    <li *ngFor="let member of members.listMemberNames; let i=index">
         <span>{{member}} <button (click)="remove(i, member)">Remover</button></span>
     </li>
 </ul>

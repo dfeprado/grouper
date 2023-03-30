@@ -1,20 +1,39 @@
 import { Injectable } from '@angular/core';
+import { Member } from './interfaces/member.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MembersService {
   private membersStorageKey = 'MEMBERS';
-  private members: string[];
+  private members!: Member[];
 
   constructor() {
     const membersString = localStorage.getItem(this.membersStorageKey);
 
-    this.members = membersString ? JSON.parse(membersString) : [];
-
+    this.parseMembers(membersString);
   }
 
-  get list(): string[] {
+  private parseMembers(membersString: string | null): void {
+    const members = membersString ? JSON.parse(membersString) as any[] : [];
+
+    if (!members.length) {
+      this.members = members;
+    } else {
+      if (typeof members[0] === 'string') {
+        this.members = members.map(m => ({name: m}));
+        this.saveAndSort();
+      } else {
+        this.members = members;
+      }
+    }
+  }
+
+  get listMemberNames(): string[] {
+    return this.members.map(m => m.name);
+  }
+
+  get list(): Member[] {
     return [...this.members];
   }
 
@@ -22,8 +41,10 @@ export class MembersService {
     return this.members.length;
   }
 
-  push(member: string): void {
-    this.members.push(member);
+  push(member: string): void;
+  push(member: Member): void;
+  push(member: Member | string): void {
+    this.members.push(typeof member === 'string' ? {name: member} : member);
     this.saveAndSort();
   }
 
@@ -33,13 +54,20 @@ export class MembersService {
   }
 
   private saveAndSort(): void {
-    this.members.sort();
+    this.members.sort((a, b) => {
+      if (a.name > b.name)
+        return 1;
+      else if (a.name === b.name)
+        return 0;
+      else
+        return -1;
+    });
     localStorage.setItem(this.membersStorageKey, JSON.stringify(this.members));
   }
 
   shuffle(): string[] {
     const shuffledMembers: string[] = [];
-    const members = this.list;
+    const members = this.listMemberNames;
     let lastIndex = -1;
 
     while (members.length) {
