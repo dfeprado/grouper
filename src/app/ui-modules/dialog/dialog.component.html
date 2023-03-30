@@ -1,6 +1,6 @@
 <div class="dialog" 
     [ngStyle]="{display: show ? 'flex' : 'none'}" 
-    (click)="dispose()">
+    (click)="tryDispose()">
     <div class="content" (click)="onContentClick($event)">
         <ng-template dialogContentHost></ng-template>
     </div>

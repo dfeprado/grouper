@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Dialog } from 'src/app/ui-modules/dialog/interfaces/dialog.interface';
+import { CloseFn, Dialog } from 'src/app/ui-modules/dialog/interfaces/dialog.interface';
 
 @Component({
   selector: 'grp-add-member-dialog',
@@ -8,4 +8,5 @@ import { Dialog } from 'src/app/ui-modules/dialog/interfaces/dialog.interface';
 })
 export class AddMemberDialogComponent implements Dialog<undefined> {
   data: undefined;
+  close!: CloseFn;
 }
