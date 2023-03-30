@@ -1,4 +1,4 @@
 export interface Member {
     name: string;
-    expiresAt?: Date;
+    expiresAt?: number;
 }

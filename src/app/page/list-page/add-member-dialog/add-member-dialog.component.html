@@ -1,2 +1,13 @@
-<p>add-member-dialog works!</p>
-<button (click)="close()">Close</button>
+<h1>Adicionar novo membro</h1>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <label for="name">Nome: </label>
+    <input type="text" id="name" formControlName="name" required #nameInput>
+    <br/>
+    <br/>
+    <label for="expires">Válido até: </label>
+    <input type="date" id="expires" formControlName="expiresOn">
+    <br/>
+    <br/>
+    <input type="submit" value="salvar">
+    <input type="button" value="Cancelar" (click)="close()">
+</form>

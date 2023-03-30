@@ -15,8 +15,8 @@ export class DialogService {
 
   constructor() { }
 
-  open<T>(dialog: DialogOpen<T>): Observable<any> {
-    const subscriber = new Subject<any>();
+  open<T>(dialog: DialogOpen<T>): Observable<T> {
+    const subscriber = new Subject<T>();
     
     this.showComponent$.next({dialog, subscriber});
 
