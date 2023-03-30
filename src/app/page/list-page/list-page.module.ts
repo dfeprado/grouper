@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ListPageRoutingModule } from './list-page-routing.module';
 import { ListPageComponent } from './list-page.component';
 import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'src/app/ui-modules/dialog/dialog.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     ListPageRoutingModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ]
 })
 export class ListPageModule { }
