@@ -1,4 +1,4 @@
-<div class="dialog" *ngIf="show">
+<div class="dialog" [ngStyle]="{display: show ? 'flex' : 'none'}" (click)="dispose()">
     <div class="content">
         <ng-template dialogContentHost></ng-template>
     </div>

@@ -4,10 +4,12 @@ import { ListPageRoutingModule } from './list-page-routing.module';
 import { ListPageComponent } from './list-page.component';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'src/app/ui-modules/dialog/dialog.module';
+import { AddMemberDialogComponent } from './add-member-dialog/add-member-dialog.component';
 
 @NgModule({
   declarations: [
-    ListPageComponent
+    ListPageComponent,
+    AddMemberDialogComponent
   ],
   imports: [
     CommonModule,

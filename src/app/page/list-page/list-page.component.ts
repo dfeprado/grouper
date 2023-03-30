@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { GroupService } from 'src/app/services/group/group.service';
 import { MembersService } from 'src/app/services/members/members.service';
 import { DialogService } from 'src/app/ui-modules/dialog/dialog.service';
+import { AddMemberDialogComponent } from './add-member-dialog/add-member-dialog.component';
 
 @Component({
   selector: 'grp-list-page',
@@ -18,7 +19,7 @@ export class ListPageComponent {
   
   addMember(): void {
     this.dialog.open<undefined>({
-      component: ListPageComponent
+      component: AddMemberDialogComponent
     });
     // const member = prompt('Qual é o nome do membro?');
     // if (!member)
