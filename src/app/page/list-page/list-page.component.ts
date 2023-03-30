@@ -19,7 +19,7 @@ export class ListPageComponent {
   
   addMember(): void {
     this.dialog.open<undefined>({
-      component: AddMemberDialogComponent
+      component: AddMemberDialogComponent,
     });
     // const member = prompt('Qual é o nome do membro?');
     // if (!member)

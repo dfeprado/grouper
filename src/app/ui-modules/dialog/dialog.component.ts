@@ -12,6 +12,7 @@ import { Dialog } from './interfaces/dialog.interface';
 })
 export class DialogComponent implements OnInit, OnDestroy {
   private showComponentSubscription!: Subscription;
+  private currentDialog?: DialogOpen<any>;
   public show = false;
 
   @ViewChild(DialogContentHostDirective, {static: true}) contentHost!: DialogContentHostDirective;
@@ -27,6 +28,7 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   private open(d: DialogOpen<any>): void {
+    this.currentDialog = d;
     const viewContainerRef =  this.contentHost.viewContainerRef;
     
     viewContainerRef.clear();
@@ -39,7 +41,14 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   dispose(): void {
+    if (!this.show || this.currentDialog?.disableDispose)
+      return;
+
     this.show = false;
     this.contentHost.viewContainerRef.clear();
+  }
+
+  onContentClick(evt: Event): void {
+    evt.stopPropagation();
   }
 }
