@@ -27,6 +27,10 @@ export class MembersService {
         this.members = members;
       }
     }
+
+    const now = Date.now();
+    this.members = this.members.filter(m => !m.expiresAt || m.expiresAt + 24*60*60*1000 > now);
+    this.saveAndSort();
   }
 
   get listMemberNames(): string[] {

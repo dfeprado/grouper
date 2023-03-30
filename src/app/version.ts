@@ -8,7 +8,7 @@
 
 export const version = {
     major: 1,
-    minor: 2,
+    minor: 3,
     release: 0,
-    timestamp: 1680213586001
+    timestamp: 1680218458609
 }
