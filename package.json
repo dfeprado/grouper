@@ -7,7 +7,10 @@
     "build": "ng build",
     "build:pages": "ng build --base-href /grouper/",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "inc-major": "node version-manager inc-major",
+    "inc-minor": "node version-manager inc-minor",
+    "inc-release": "node version-manager inc-release"
   },
   "private": true,
   "dependencies": {
