@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { PopupComponent } from './components/popup/popup.component';
 import { FormsModule } from '@angular/forms';
 
@@ -11,10 +11,12 @@ const LS_PLAYERS_KEY = "players";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  public players = signal(["Foo", "Bar", "Joe"])
+  public players = signal(<string[]>[])
   private addPlayerPopup = viewChild(PopupComponent)
   private newPlayersTextArea = viewChild<ElementRef<HTMLTextAreaElement>>("newPlayersTextArea")
   public newPlayers: string = ""
+  private selectedPlayersIndexes = new Set<number>()
+  public hasSelectedPlayer = signal(false)
 
   constructor() {
     const players = localStorage.getItem(LS_PLAYERS_KEY) ?? ""
@@ -48,5 +50,25 @@ export class AppComponent {
   public closeAddPlayersPopup() {
     this.newPlayers = ""
     this.addPlayerPopup()?.close();
+  }
+
+  public selectPlayerIndex(index: number): void {
+    if (this.selectedPlayersIndexes.has(index)) {
+      this.selectedPlayersIndexes.delete(index)
+    } else {
+      this.selectedPlayersIndexes.add(index);
+    }
+    this.hasSelectedPlayer.set(this.selectedPlayersIndexes.size > 0)
+  }
+
+  public removePlayers(): void {
+    const confirmed = confirm("Tem certeza que quer remover esses jogadores?")
+    if (!confirmed) {
+      return;
+    }
+
+    this.players.update(players => players.filter((_, idx) => !this.selectedPlayersIndexes.has(idx)))
+    this.selectedPlayersIndexes.clear();
+    this.hasSelectedPlayer.set(false);
   }
 }

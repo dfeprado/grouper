@@ -1,11 +1,15 @@
 <ul>
-  @for (player of players(); track player) {
-  <li>{{ player }}</li>
+  @for (player of players(); track player; let idx = $index) {
+  <li>
+    <input type="checkbox" (change)="selectPlayerIndex(idx)" /> {{ player }}
+  </li>
   }
 </ul>
-<button type="button" (click)="openAddPlayersPopup()">
-  Adicionar jogadores
-</button>
+<button type="button" (click)="openAddPlayersPopup()">Adicionar</button>
+@if (hasSelectedPlayer()) {
+<button type="button" (click)="removePlayers()">Remover</button>
+}
+
 <grp-popup>
   <p>Escreva os nomes dos novos jogadores, cada um em uma linha.</p>
   <textarea
