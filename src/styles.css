@@ -10,12 +10,20 @@ html, body {
     height: 100%;
 }
 
-p, li, button {
+ul {
+    list-style-type: none;
+
+    li {
+        margin-left: 1rem;
+    }
+}
+
+p, li, button, textarea {
     font-size: 1.2rem;
 }
 
 p {
-    margin-bottom: .5rem;
+    margin-bottom: 1rem;
 }
 
 button {
@@ -24,17 +32,64 @@ button {
     background-color: #5785da;
     color: white;
     cursor: pointer;
+
+    &:hover {
+        background-color: #4b73be;
+    }
+    &:active {
+        background-color: #6b92da;
+    }
 }
 
-button:hover {
-    background-color: #4b73be;
-}
+button.uncolor {
+    background-color: #eee;
+    color: black;
 
-button:active {
-    background-color: #6b92da;
+    &:hover {
+        background-color: #ccc;
+    }
+
+    &:active {
+        background-color: white;
+    }
 }
 
 /* Sizing classes */
 .w-full {
     width: 100%;
+}
+
+/* Flex classes */
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+@media screen and (max-width: 360px) {
+    .mob-flex-col {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.gap-1 {
+    gap: .35rem;
+}
+
+/* Paddings */
+.ph-2 {
+    padding: 0 1rem;
+}
+
+.pt-2 {
+    padding-top: 1rem;
+}
+
+/* Margins */
+.mb-2 {
+    margin-bottom: 1rem;
+}
+
+.mt-2 {
+    margin-top: 1rem;
 }

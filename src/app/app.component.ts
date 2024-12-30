@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { PopupComponent } from './components/popup/popup.component';
 import { FormsModule } from '@angular/forms';
+import { CheckboxComponent } from './components/checkbox/checkbox.component';
 
 const LS_PLAYERS_KEY = "players";
 
 @Component({
   selector: 'grp-root',
-  imports: [PopupComponent, FormsModule],
+  imports: [PopupComponent, CheckboxComponent, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -38,7 +39,7 @@ export class AppComponent {
   }
 
   public addPlayers(): void {
-    const newPlayers = this.newPlayers.split("\n").filter(e => !!e)
+    const newPlayers = this.newPlayers.split("\n").filter(e => !!e).map(e => e.trim())
     if (newPlayers.length > 0) {
       const allPlayers = new Set<string>(this.players().concat(newPlayers))
       this.players.set(Array.from(allPlayers).sort())

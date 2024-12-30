@@ -3,8 +3,41 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 @Component({
   selector: 'grp-popup',
   imports: [],
-  templateUrl: './popup.component.html',
-  styleUrl: './popup.component.css',
+  template: `
+    <div class="popup-zone" [class.hidden]="hidden()">
+      <div class="popup">
+        <ng-content />
+      </div>
+    </div>
+  `,
+  styles: [
+    `
+      .popup-zone {
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, .5);
+        position: absolute;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        @media screen and (max-width: 360px) {
+            padding-top: 2rem;
+            align-items: start;
+        }
+    
+        .popup {
+            background-color: white;
+            padding: .5rem 1rem;
+        }
+    }
+    
+    .hidden {
+        display: none;
+    }
+  `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PopupComponent {
