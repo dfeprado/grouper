@@ -1,12 +1,5 @@
 <div class="popup-zone" [class.hidden]="hidden()">
   <div class="popup">
     <ng-content />
-    <button
-      type="button"
-      (click)="cancel()"
-      [class.hidden]="hideCancelButton()"
-    >
-      Cancelar
-    </button>
   </div>
 </div>

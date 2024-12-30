@@ -3,13 +3,17 @@
   <li>{{ player }}</li>
   }
 </ul>
-<button type="button" (click)="addPlayers()">Adicionar</button>
+<button type="button" (click)="openAddPlayersPopup()">
+  Adicionar jogadores
+</button>
 <grp-popup>
   <p>Escreva os nomes dos novos jogadores, cada um em uma linha.</p>
   <textarea
     class="w-full"
     style="min-height: 250px"
-    autofocus="true"
+    [(ngModel)]="newPlayers"
+    #newPlayersTextArea
   ></textarea>
-  <button type="button">Adicionar</button>
+  <button type="button" (click)="addPlayers()">Adicionar</button>
+  <button type="button" (click)="closeAddPlayersPopup()">Cancelar</button>
 </grp-popup>

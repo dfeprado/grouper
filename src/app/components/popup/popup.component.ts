@@ -1,31 +1,20 @@
-import { Component, signal } from '@angular/core';
-
-type PopupOptions = {
-  confirmLabel?: string;
-  cancelLabel?: string;
-  hideCancelButton?: boolean;
-}
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 @Component({
   selector: 'grp-popup',
   imports: [],
   templateUrl: './popup.component.html',
-  styleUrl: './popup.component.css'
+  styleUrl: './popup.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PopupComponent {
-  public hideCancelButton = signal(true)
-  public confirmButtonLabel = signal("Ok")
-  public cancelButtonLabel = signal("Cancelar")
   public hidden = signal(true)
 
-  public open(options?: PopupOptions): void {
-    this.confirmButtonLabel.set(options?.confirmLabel ?? "Ok")
-    this.cancelButtonLabel.set(options?.cancelLabel ?? "Cancelar")
-    this.hideCancelButton.set(options?.hideCancelButton ?? false)
+  public open(): void {
     this.hidden.set(false)
   }
 
-  public cancel(): void {
+  public close(): void {
     this.hidden.set(true);
   }
 }
