@@ -3,6 +3,7 @@ import { PopupComponent } from './components/popup/popup.component';
 import { FormsModule } from '@angular/forms';
 
 const LS_PLAYERS_KEY = "players";
+
 @Component({
   selector: 'grp-root',
   imports: [PopupComponent, FormsModule],
@@ -70,5 +71,16 @@ export class AppComponent {
     this.players.update(players => players.filter((_, idx) => !this.selectedPlayersIndexes.has(idx)))
     this.selectedPlayersIndexes.clear();
     this.hasSelectedPlayer.set(false);
+  }
+
+  public removeAllPlayers(): void {
+    const confirmed = confirm("Tem certeza que quer remover todos os jogadores?")
+    if (!confirmed) {
+      return;
+    }
+
+    this.players.set([])
+    this.selectedPlayersIndexes.clear();
+    this.hasSelectedPlayer.set(false)
   }
 }

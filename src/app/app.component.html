@@ -1,23 +1,33 @@
-<ul>
-  @for (player of players(); track player; let idx = $index) {
-  <li>
-    <input type="checkbox" (change)="selectPlayerIndex(idx)" /> {{ player }}
-  </li>
-  }
-</ul>
+@if (players().length > 0) {
+  <p>{{players().length}} jogadores.</p>
+  <ul>
+    @for (player of players(); track player; let idx = $index) {
+      <li>
+        <label class="container">
+          <input type="checkbox" (change)="selectPlayerIndex(idx)">
+          <span class="checkmark"></span>
+          {{player}}
+        </label>
+      </li>
+    }
+  </ul>
+  <button type="button">Sortear</button>
+} @else {
+  <p><em>Nenhum jogador registrado.</em></p>
+}
 <button type="button" (click)="openAddPlayersPopup()">Adicionar</button>
+
+@if (players().length > 0) {
+  <button type="button" (click)="removeAllPlayers()">Remover todos</button>
+}
+
 @if (hasSelectedPlayer()) {
-<button type="button" (click)="removePlayers()">Remover</button>
+  <button type="button" (click)="removePlayers()">Remover</button>
 }
 
 <grp-popup>
   <p>Escreva os nomes dos novos jogadores, cada um em uma linha.</p>
-  <textarea
-    class="w-full"
-    style="min-height: 250px"
-    [(ngModel)]="newPlayers"
-    #newPlayersTextArea
-  ></textarea>
+  <textarea class="w-full" style="min-height: 250px" [(ngModel)]="newPlayers" #newPlayersTextArea></textarea>
   <button type="button" (click)="addPlayers()">Adicionar</button>
   <button type="button" (click)="closeAddPlayersPopup()">Cancelar</button>
 </grp-popup>

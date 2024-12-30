@@ -10,6 +10,30 @@ html, body {
     height: 100%;
 }
 
+p, li, button {
+    font-size: 1.2rem;
+}
+
+p {
+    margin-bottom: .5rem;
+}
+
+button {
+    padding: .5rem 1rem;
+    border: 0;
+    background-color: #5785da;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4b73be;
+}
+
+button:active {
+    background-color: #6b92da;
+}
+
 /* Sizing classes */
 .w-full {
     width: 100%;
