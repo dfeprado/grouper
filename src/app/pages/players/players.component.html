@@ -1,0 +1,34 @@
+<div class="ph-2 pt-2">
+    @if (players().length > 0) {
+      <p>{{players().length}} {{players().length > 1 ? 'jogadores' : 'jogador'}}.</p>
+      <ul>
+        @for (player of players(); track player; let idx = $index) {
+          <li>
+            <grp-checkbox [value]="idx" (onCheck)="selectPlayerIndex($event)">{{player}}</grp-checkbox>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p><em>Nenhum jogador registrado.</em></p>
+    }
+    <div class="flex-row mob-flex-col gap-1 mt-2">
+      <button type="button" (click)="openAddPlayersPopup()">Adicionar</button>
+      @if (players().length > 0) {
+        <button type="button" routerLink="/sort">Sortear</button>
+        @if (!hasSelectedPlayer()) {
+          <button type="button" class="uncolor" (click)="removeAllPlayers()">Remover todos</button>
+        } @else {
+          <button type="button" class="uncolor" (click)="removePlayers()">Remover</button>
+        }
+      }
+    </div>
+  </div>
+  
+  <grp-popup>
+    <p>Escreva os nomes dos novos jogadores, cada um em uma linha.</p>
+    <textarea class="w-full" style="min-height: 175px" [(ngModel)]="newPlayers" #newPlayersTextArea></textarea>
+    <div class="flex-row gap-1" style="justify-content: end;">
+      <button type="button" (click)="addPlayers()">Adicionar</button>
+      <button type="button" class="uncolor" (click)="closeAddPlayersPopup()">Cancelar</button>
+    </div>
+  </grp-popup>
