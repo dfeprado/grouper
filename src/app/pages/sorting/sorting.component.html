@@ -35,7 +35,8 @@
         <canvas style="border: 1px solid black; height: 350px; width: 300px;" #canvas
             (mousemove)="drawPattern($event)"
             (mouseup)="finishPatternDrawing($event)"
-            (touchmove)="drawPatternForTouch($event)"></canvas>
+            (touchmove)="drawPatternForTouch($event)"
+            (touchend)="finishPatternDrawing($event)"></canvas>
     </div>
     @if (insuficientShufflePatternPoints()) {
         <p style="text-align:center;">Desenhe um pouco mais.</p>

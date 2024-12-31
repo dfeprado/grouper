@@ -117,6 +117,10 @@ export class SortingComponent {
       return;
     }
 
+    this.actuallyDraw(event.clientX, event.clientY);
+  }
+
+  private actuallyDraw(x: number, y: number) {
     if (this.insuficientShufflePatternPoints()) {
       this.resetCanvas();
     }
@@ -129,8 +133,8 @@ export class SortingComponent {
     const canvas = this.shuffleCanvas()!.nativeElement;
     const offsetTop = canvas.offsetTop;
     const offsetLeft = canvas.offsetLeft;
-    const x = event.clientX - offsetLeft;
-    const y = event.clientY - offsetTop;
+    const _x = x - offsetLeft;
+    const _y = y - offsetTop;
 
     if (this.shufflePatternPositions.length > 0) {
       const ctx = this.shuffleCanvasCtx!;
@@ -138,11 +142,11 @@ export class SortingComponent {
         this.shufflePatternPositions[this.shufflePatternPositions.length - 1];
       ctx.beginPath();
       ctx.moveTo(lastPosition[0], lastPosition[1]);
-      ctx.lineTo(x, y);
+      ctx.lineTo(_x, _y);
       ctx.stroke();
     }
 
-    this.shufflePatternPositions.push([x, y]);
+    this.shufflePatternPositions.push([_x, _y]);
   }
 
   private resetCanvas() {
@@ -154,8 +158,12 @@ export class SortingComponent {
     this.shuffleCanvasCtx!.lineWidth = 3;
   }
 
-  public finishPatternDrawing(event: MouseEvent): void {
-    if (event.buttons === 1 || !this.drawingShufflePattern()) {
+  public finishPatternDrawing(event: MouseEvent | TouchEvent): void {
+    console.log('OK');
+    if (
+      (event instanceof MouseEvent && event.buttons === 1) ||
+      !this.drawingShufflePattern()
+    ) {
       return;
     }
     this.drawingShufflePattern.set(false);
@@ -172,7 +180,6 @@ export class SortingComponent {
   }
 
   public drawPatternForTouch(event: TouchEvent): void {
-    console.log(event.touches[0].clientX);
-    console.log(event.touches[0].clientY);
+    this.actuallyDraw(event.touches[0].clientX, event.touches[0].clientY);
   }
 }
