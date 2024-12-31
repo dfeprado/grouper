@@ -1,1 +1,15 @@
-<p>teams works!</p>
+@if(teams().length === 0) {
+    <p>Sorteando os times...</p>
+} @else {
+    <p>Times:</p>
+    @for (team of teams(); track team.letter) {
+        <p>{{team.letter}}</p>
+        <ul>
+            @for (member of team.members; track $index) {
+                <li>{{member}}</li>
+            }
+        </ul>
+    }
+
+    <button type="button" class="uncolor" routerLink="/sort">Voltar</button>
+}

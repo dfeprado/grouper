@@ -1,4 +1,3 @@
-import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +13,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PopupComponent } from '../../components/popup/popup.component';
 
 const LS_NUMBER_OF_TEAMS_KEY = 'number_of_teams';
-const LS_SHUFFLE_PATTERN_POSITIONS_KEY = 'sort_pattern';
+const LS_SHUFFLE_PATTERN_POSITIONS_KEY = 'shuffle_pattern';
 
 @Component({
   selector: 'grp-sorting',
@@ -109,8 +108,8 @@ export class SortingComponent {
     this.shuffleCanvasCtx = canvas?.getContext('2d')!;
     this.shuffleCanvasCtx.canvas.width = canvas!.offsetWidth;
     this.shuffleCanvasCtx.canvas.height = canvas!.offsetHeight;
-    this.resetCanvas();
     this.shufflePatternPopup()?.open();
+    this.resetCanvas();
   }
 
   public drawPattern(event: MouseEvent): void {
