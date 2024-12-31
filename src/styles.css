@@ -26,6 +26,19 @@ p, input, ul {
     margin-bottom: 1rem;
 }
 
+button.uncolor {
+    background-color: #eee;
+    color: black;
+
+    &:hover {
+        background-color: #ccc;
+    }
+
+    &:active {
+        background-color: white;
+    }
+}
+
 button {
     padding: .5rem 1rem;
     border: 0;
@@ -39,20 +52,12 @@ button {
     &:active {
         background-color: #6b92da;
     }
-}
-
-button.uncolor {
-    background-color: #eee;
-    color: black;
-
-    &:hover {
+    &:disabled {
         background-color: #ccc;
-    }
-
-    &:active {
-        background-color: white;
+        color: #bbb;
     }
 }
+
 
 /* Sizing classes */
 .w-full {

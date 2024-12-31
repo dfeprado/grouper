@@ -1,20 +1,46 @@
 <div class="ph-2 pt-2">
     <p>Há {{numberOfPlayers}} {{numberOfPlayers > 1 ? 'jogadores' : 'jogador'}}.</p>
     <p>Escolha quantos times você deseja criar:</p>
-    <input type="number" [max]="numberOfPlayers" min="2" step="1" [(ngModel)]="numberOfTeams"
-        class="w-full">
+    <div class="flex-row mb-2" style="justify-content: space-between; align-items: baseline; max-width: 400px;">
+        <button type="button" (click)="reduceTeams()"
+            [disabled]="numberOfTeams() === 2">-</button>
+        <p>{{numberOfTeams()}}</p>
+        <button type="button" (click)="increaseTeams()"
+            [disabled]="numberOfTeams() >= numberOfPlayers">+</button>
+    </div>
 
     @if (teams() !== null) {
         <p>Jogadores por time:</p>
         <ul>
             @for(team of teams(); track team.letter) {
-                <li>Time {{team.letter}}: {{team.membersCount}}</li>
+                <li>{{team.letter}}: {{team.membersCount}}</li>
             }
         </ul>
 
     }
     <div class="flex-row mob-flex-col gap-1">
-        <button type="button" *ngIf="teams() !== null">Sortear</button>
-        <button type="button" class="uncolor">Voltar</button>
+        @if (teams() !== null) {
+            <button type="button" (click)="openShufflePopup()">Sortear</button>
+        }
+        <button type="button" class="uncolor" routerLink="/">Voltar</button>
     </div>
 </div>
+
+<grp-popup>
+    <p style="text-align: center;">
+        Posicione o cursor na área abaixo, clique e segure e arraste o mouse. Depois, solte
+        o clique para finalizar.
+    </p>
+    <div class="flex-row" style="justify-content: center;">
+        <canvas style="border: 1px solid black; height: 350px; width: 300px;" #canvas
+            (mousemove)="drawPattern($event)"
+            (mouseup)="finishPatternDrawing($event)"
+            (touchmove)="drawPatternForTouch($event)"></canvas>
+    </div>
+    @if (insuficientShufflePatternPoints()) {
+        <p style="text-align:center;">Desenhe um pouco mais.</p>
+    }
+    <button type="button" class="uncolor w-full mt-2" 
+        (click)="shufflePatternPopup()?.close()"
+        [disabled]="drawingShufflePattern()">Cancelar</button>
+</grp-popup>
