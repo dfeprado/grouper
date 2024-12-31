@@ -1,1 +1,20 @@
-<p>sorting works!</p>
+<div class="ph-2 pt-2">
+    <p>Há {{numberOfPlayers}} {{numberOfPlayers > 1 ? 'jogadores' : 'jogador'}}.</p>
+    <p>Escolha quantos times você deseja criar:</p>
+    <input type="number" [max]="numberOfPlayers" min="2" step="1" [(ngModel)]="numberOfTeams"
+        class="w-full">
+
+    @if (teams() !== null) {
+        <p>Jogadores por time:</p>
+        <ul>
+            @for(team of teams(); track team.letter) {
+                <li>Time {{team.letter}}: {{team.membersCount}}</li>
+            }
+        </ul>
+
+    }
+    <div class="flex-row mob-flex-col gap-1">
+        <button type="button" *ngIf="teams() !== null">Sortear</button>
+        <button type="button" class="uncolor">Voltar</button>
+    </div>
+</div>
