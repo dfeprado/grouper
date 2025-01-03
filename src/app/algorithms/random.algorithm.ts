@@ -61,6 +61,6 @@ export class Cyrb128Sfc32RandomAlgorithm {
   }
 
   public random(ceiling: number): number {
-    return Math.floor(this.randomFn() * (ceiling + 1));
+    return Math.floor(this.randomFn() * ceiling);
   }
 }
