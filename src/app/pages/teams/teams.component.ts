@@ -48,6 +48,10 @@ export class TeamsComponent {
     this.teams.set(teams);
   }
 
+  public goMatches(): void {
+    this.navigator.navigateAbsolute(routesMap.matches);
+  }
+
   public goShuffle(): void {
     this.navigator.navigateAbsolute(routesMap.shuffle);
   }

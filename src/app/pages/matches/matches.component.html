@@ -1,0 +1,22 @@
+<div class="flex-col gap-3 desktop-max-width">
+    <h1 style="text-align: center;">{{!finished() ? match() : "Fim"}}</h1>
+    @if (pastMatches().length !== 0) {
+        <div>
+            <p>Partidas anteriores:</p>
+            <ul>
+                @for (match of pastMatches(); track match) {
+                    <li>{{match}}</li>
+                }
+            </ul>
+        </div>
+    }
+    <div class="flex-row mob-flex-col gap-1">
+    @if (!finished()) {
+        <button type="button" (click)="nextMatch()">Próxima partida</button>
+        <button type="button" (click)="goTeams()">Ver times</button>
+    } @else {
+        <button type="button" (click)="goShuffle()">Sortear</button>
+        <button type="button" (click)="goPlayers()">Início</button>
+    }
+    </div>
+</div>

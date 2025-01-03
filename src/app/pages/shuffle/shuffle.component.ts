@@ -91,6 +91,7 @@ export class ShuffleComponent {
       console.log('Desenhe mais');
       this.insuficientShufflePatternPoints.set(true);
     } else {
+      this.repo.clearMatches();
       this.repo.setTeamsCount(this.numberOfTeams());
       this.repo.setShufflePattern(this.shufflePatternPositions);
       this.navigator.navigateAbsolute(routesMap.teams);

@@ -1,0 +1,10 @@
+h1 {
+    padding: 2rem 0;
+}
+
+@media screen and (min-width: 800px) {
+    .desktop-max-width {
+        max-width: 350px;
+        align-items: center;
+    }
+}

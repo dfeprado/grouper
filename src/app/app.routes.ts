@@ -6,11 +6,13 @@ import { inject } from '@angular/core';
 import { GrpNavigatorService } from './grp-navigator.service';
 import { shuffleCanActivateGuard } from './pages/shuffle/shuffle-can-activate.guard';
 import { teamsCanActivateGuard } from './pages/teams/teams-can-activate.guard';
+import { MatchesComponent } from './pages/matches/matches.component';
 
 export const routesMap = {
   players: 'players',
   shuffle: 'shuffle',
   teams: 'teams',
+  matches: 'matches',
 };
 
 export const routes: Routes = [
@@ -24,6 +26,10 @@ export const routes: Routes = [
     path: routesMap.teams,
     component: TeamsComponent,
     canActivate: [teamsCanActivateGuard],
+  },
+  {
+    path: routesMap.matches,
+    component: MatchesComponent,
   },
   {
     path: '',
