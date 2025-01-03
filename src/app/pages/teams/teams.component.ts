@@ -51,4 +51,8 @@ export class TeamsComponent {
   public goShuffle(): void {
     this.navigator.navigateAbsolute(routesMap.shuffle);
   }
+
+  public goPlayers(): void {
+    this.navigator.navigateAbsolute(routesMap.players);
+  }
 }
