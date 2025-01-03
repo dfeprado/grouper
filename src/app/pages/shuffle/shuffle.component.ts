@@ -2,42 +2,36 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   ElementRef,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PopupComponent } from '../../components/popup/popup.component';
-
-const LS_NUMBER_OF_TEAMS_KEY = 'number_of_teams';
-const LS_SHUFFLE_PATTERN_POSITIONS_KEY = 'shuffle_pattern';
+import { RepoService } from '../../repo.service';
+import { GrpNavigatorService } from '../../grp-navigator.service';
+import { routesMap } from '../../app.routes';
 
 @Component({
-  selector: 'grp-sorting',
-  imports: [FormsModule, RouterLink, PopupComponent],
-  templateUrl: './sorting.component.html',
-  styleUrl: './sorting.component.css',
+  selector: 'grp-shuffle',
+  imports: [FormsModule, PopupComponent],
+  templateUrl: './shuffle.component.html',
+  styleUrl: './shuffle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SortingComponent {
-  private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
+export class ShuffleComponent {
+  private navigator = inject(GrpNavigatorService);
+  private repo = inject(RepoService);
   private shuffleCanvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
   private shuffleCanvasCtx: CanvasRenderingContext2D | null = null;
-  private shuffleCanvasTop: number = 0;
-  private shuffleCanvasLeft: number = 0;
   private shufflePatternPositions: number[][] = [];
   public drawingShufflePattern = signal(false);
   public insuficientShufflePatternPoints = signal(false);
   public shufflePatternPopup = viewChild(PopupComponent);
-  public players: string[] = [];
-  public numberOfPlayers = 0;
-  public numberOfTeams = signal(
-    Number.parseInt(localStorage.getItem(LS_NUMBER_OF_TEAMS_KEY) ?? '2')
-  );
+  public players: string[] = this.repo.getPlayers();
+  public numberOfPlayers = this.repo.countPlayers();
+  public numberOfTeams = signal(this.repo.getTeamsCount());
   public teams = computed(() => {
     if (
       this.numberOfTeams() <= 1 ||
@@ -64,25 +58,6 @@ export class SortingComponent {
     }));
   });
 
-  constructor() {
-    effect(() => {
-      localStorage.setItem(
-        LS_NUMBER_OF_TEAMS_KEY,
-        this.numberOfTeams().toString()
-      );
-    });
-  }
-
-  ngOnInit() {
-    this.activatedRoute.data.subscribe((data) => {
-      this.players = data['players'];
-
-      this.numberOfPlayers = this.players.length;
-    });
-
-    this.openShufflePopup();
-  }
-
   public reduceTeams(): void {
     this.numberOfTeams.update((value) => {
       if (value > 2) {
@@ -103,6 +78,25 @@ export class SortingComponent {
     });
   }
 
+  public finishPatternDrawing(event: MouseEvent | TouchEvent): void {
+    console.log('OK');
+    if (
+      (event instanceof MouseEvent && event.buttons === 1) ||
+      !this.drawingShufflePattern()
+    ) {
+      return;
+    }
+    this.drawingShufflePattern.set(false);
+    if (this.shufflePatternPositions.length < 32) {
+      console.log('Desenhe mais');
+      this.insuficientShufflePatternPoints.set(true);
+    } else {
+      this.repo.setTeamsCount(this.numberOfTeams());
+      this.repo.setShufflePattern(this.shufflePatternPositions);
+      this.navigator.navigateAbsolute(routesMap.teams);
+    }
+  }
+
   public openShufflePopup(): void {
     const canvas = this.shuffleCanvas()?.nativeElement;
     this.shuffleCanvasCtx = canvas?.getContext('2d')!;
@@ -118,6 +112,11 @@ export class SortingComponent {
     }
 
     this.actuallyDraw(event.clientX, event.clientY);
+  }
+
+  public drawPatternForTouch(event: TouchEvent): void {
+    event.preventDefault();
+    this.actuallyDraw(event.touches[0].clientX, event.touches[0].clientY);
   }
 
   private actuallyDraw(x: number, y: number) {
@@ -158,28 +157,7 @@ export class SortingComponent {
     this.shuffleCanvasCtx!.lineWidth = 3;
   }
 
-  public finishPatternDrawing(event: MouseEvent | TouchEvent): void {
-    console.log('OK');
-    if (
-      (event instanceof MouseEvent && event.buttons === 1) ||
-      !this.drawingShufflePattern()
-    ) {
-      return;
-    }
-    this.drawingShufflePattern.set(false);
-    if (this.shufflePatternPositions.length < 32) {
-      console.log('Desenhe mais');
-      this.insuficientShufflePatternPoints.set(true);
-    } else {
-      localStorage.setItem(
-        LS_SHUFFLE_PATTERN_POSITIONS_KEY,
-        JSON.stringify(this.shufflePatternPositions)
-      );
-      this.router.navigateByUrl('/teams');
-    }
-  }
-
-  public drawPatternForTouch(event: TouchEvent): void {
-    this.actuallyDraw(event.touches[0].clientX, event.touches[0].clientY);
+  public goPlayers(): void {
+    this.navigator.navigateAbsolute(routesMap.players);
   }
 }

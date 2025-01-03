@@ -14,7 +14,7 @@
     <div class="flex-row mob-flex-col gap-1 mt-2">
       <button type="button" (click)="openAddPlayersPopup()">Adicionar</button>
       @if (players().length > 0) {
-        <button type="button" routerLink="/sort">Sortear</button>
+        <button type="button" (click)="goShuffle()">Sortear</button>
         @if (!hasSelectedPlayer()) {
           <button type="button" class="uncolor" (click)="removeAllPlayers()">Remover todos</button>
         } @else {
