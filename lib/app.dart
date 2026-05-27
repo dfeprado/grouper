@@ -16,7 +16,7 @@ class App extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     // TODO: implement build
-    return div([
+    return div(classes: "main", [
       Router(
         routes: [
           ShellRoute(
@@ -30,13 +30,25 @@ class App extends StatelessComponent {
                 title: "Configurações de grupos",
                 builder: (context, state) => const GroupSettingsPage(),
               ),
-              Route(path: "/groupformation", title: "Grupos", builder: (context, state) => const GroupFormationPage()),
+              Route(
+                path: "/groupformation",
+                title: "Grupos",
+                builder: (context, state) => const GroupFormationPage(),
+              ),
             ],
           ),
         ],
       ),
     ]);
   }
+
+  @css
+  static List<StyleRule> get styles => [
+    css(".main", [css("&").styles(display: .flex, height: 100.vh, flexDirection: .column, flexWrap: .wrap)]),
+    css(
+      "section",
+    ).styles(display: .flex, flexDirection: .column, justifyContent: .start, alignItems: .center, flex: Flex(grow: 1)),
+  ];
   // const App({super.key});
 
   // @override
