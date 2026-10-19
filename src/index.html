@@ -1,16 +1,523 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+
 <head>
-  <meta charset="utf-8">
-  <title>Grouper</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#1976d2">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grouper</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 0px;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            border: 1px solid blue;
+        }
+
+        .page {
+            position: relative;
+            border: 1px solid red;
+            padding: .3em .5em;
+            min-height: 100%;
+
+            & .popup {
+                position: absolute;
+                height: 100vh;
+                width: 100vw;
+                background-color: white;
+                top: 0;
+                left: 0;
+                padding: .3em .5em;
+            }
+        }
+
+        h1 {
+            margin-bottom: .5em;
+        }
+
+        h2,
+        p {
+            margin-bottom: .3em;
+        }
+
+        ul {
+            margin-left: 1.5em;
+            list-style-type: none;
+        }
+
+        .actions {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            row-gap: .4em;
+
+            & button {
+                padding: .7em 0em;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input {
+            font-size: 1.5em;
+            padding: .3em 0.5em;
+            max-width: 100%;
+        }
+
+        input[type="checkbox"] {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-grow {
+            flex: 1;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
-  <app-root></app-root>
-  <noscript>Please enable JavaScript to continue using this application.</noscript>
+    <div id="members" class="page">
+        <h1>Participantes</h1>
+        <h2><strong>Total:</strong> <span id="m_members_count">0</span></h2>
+        <p style="color: red" id="m_missing_error"><small>Adicione mais <span id="m_members_missing_count">0</span>
+                participantes.</small>
+        </p>
+        <ul id="m_members"></ul>
+        <div class="actions">
+            <button id="m_edit_btn">Editar</button>
+            <button id="m_set_teams_btn" class="hidden">Configurar equipes</button>
+        </div>
+        <div id="m_add_members_popup" class="popup hidden">
+            <div class="flex flex-col" style="height:85%">
+                <p>Escreva os novos nomes, um para cada linha:</p>
+                <p><small>Use '*' ao fim do nome para indicar o nível de habilidade do participante. Participantes com o
+                        mesmo
+                        número de '*' serão separados em grupos diferentes o máximo que for possível. Isso ajuda a
+                        equilibrar as
+                        equipes.</small></p>
+                <textarea class="flex-grow" autofocus></textarea>
+            </div>
+            <div class="actions">
+                <button id="map_cancel_btn">Cancelar</button>
+                <button id="map_remove_all_btn">Remover todos</button>
+                <button id="map_save_btn">Salvar</button>
+            </div>
+        </div>
+    </div>
+    <div id="teams_settings" class="page">
+        <h1>Configurações de times</h1>
+        <p>Quantos times você quer ter?</p>
+        <input type="number" step="1" min="2" value="2" name="team_count" id="f_team_count" autofocus>
+        <p class="error hidden" id="ts_error"><small>Error</small></p>
+        <p id="team_formation_p"></p>
+        <div class="actions">
+            <button id="gs_back">Configurar participantes</button>
+            <button id="gs_sort">Sortear times</button>
+        </div>
+    </div>
+    <div id="formed_groups" class="page">
+        <h1>Grupos formados</h1>
+        <div id="fg_teams"></div>
+        <div class="actions">
+            <button id="fg_sort_again">Sortear novamente</button>
+            <button id="fg_teams_set">Configurar equipes</button>
+            <button id="fg_start">Configurar participantes</button>
+        </div>
+    </div>
 </body>
+
 </html>
+
+<script lang="javascript">
+    (function () {
+        function save(obj, key) {
+            window.localStorage.setItem(key, JSON.stringify(obj));
+        }
+
+        function load(key) {
+            const value = window.localStorage.getItem(key);
+            return value ? JSON.parse(value) : null;
+        }
+
+        function unsave(key) {
+            window.localStorage.removeItem(key);
+        }
+
+        function show(element) {
+            element.classList.remove("hidden");
+        }
+
+        function hide(element) {
+            element.classList.add("hidden");
+        }
+
+        function init_members_page(nav) {
+            const page = document.getElementById("members");
+            // Popups
+            const add_popup = page.querySelector("#m_add_members_popup");
+            // Buttons
+            const set_teams_btn = page.querySelector("#m_set_teams_btn");
+            const popup_cancel_btn = add_popup.querySelector("#map_cancel_btn");
+            const popup_save_btn = add_popup.querySelector("#map_save_btn");
+            const popup_remove_all_btn = add_popup.querySelector("#map_remove_all_btn");
+            // Inputs
+            const members_textarea = add_popup.querySelector("textarea");
+            // Others
+            const members_count = page.querySelector("#m_members_count");
+            const missing_error = page.querySelector("#m_missing_error");
+            const missing_members_count = page.querySelector("#m_members_missing_count");
+
+            // Preparação do popup de adicionar participantes
+            page.querySelector("#m_edit_btn").addEventListener("click", () => {
+                members_textarea.value = members.join("\n");
+                members_textarea.focus();
+                show(add_popup);
+            })
+            popup_cancel_btn.addEventListener("click", () => {
+                hide(add_popup);
+            })
+            popup_save_btn.addEventListener("click", () => {
+                // TODO desconsiderar os "*" na hora de adicionar
+                // um participante para evitar duplicidades de nomes
+                const new_members = members_textarea.value.split("\n").map(e => e.trim()).filter(e => e !== "");
+
+                members = new_members.sort()
+                print_members();
+                hide(add_popup);
+            });
+            popup_remove_all_btn.addEventListener("click", () => {
+                members_textarea.value = "";
+            })
+
+            // Exibição dos participantes
+            function create_member_li(idx, name) {
+                const name_el = document.createElement("span");
+                name_el.innerText = " " + name;
+
+                const li = document.createElement("li");
+                li.appendChild(name_el)
+
+                return li;
+            }
+
+            function print_members() {
+                const ul = page.querySelector("#m_members");
+                ul.innerHTML = "";
+                members.forEach((name, idx) => ul.appendChild(create_member_li(idx, name)));
+
+                members_count.innerText = members.length.toString();
+                missing_members_count.innerText = 4 - members.length;
+
+                if (members.length >= 4) {
+                    show(set_teams_btn);
+                    hide(missing_error);
+                } else {
+                    hide(set_teams_btn);
+                    show(missing_error);
+                }
+            }
+
+            print_members();
+
+            set_teams_btn.addEventListener("click", () => {
+                save(members, LS_MEMBERS_KEY);
+                nav["next"]();
+            })
+
+            return page;
+        }
+
+        function init_team_settings_page(nav) {
+            const page = document.querySelector("#teams_settings");
+            // Buttons
+            const back_btn = document.querySelector("#gs_back");
+            const sort_btn = document.querySelector("#gs_sort");
+            // Inputs
+            const teams_count_field = page.querySelector("#f_team_count");
+            // Others
+            const error_p = page.querySelector("#ts_error");
+            const team_formation_p = page.querySelector("#team_formation_p");
+
+            function set_error(msg) {
+                if (msg === "") {
+                    hide(error_p);
+                    return;
+                }
+
+                error_p.firstChild.innerText = msg;
+                show(error_p);
+            }
+
+            function set_team_formation_text(msg) {
+                team_formation_p.innerText = msg;
+            }
+
+            function calculate_members_per_team() {
+                const members_per_team = Math.floor(members.length / teams_count);
+                let message = `Cada time terá ${members_per_team} membros.`
+
+                const left_members = members.length - members_per_team * teams_count;
+                if (left_members > 0) {
+                    const xpto = left_members > 1 ? "times terão" : "time terá";
+                    message += ` ${left_members} ${xpto} 1 membro a mais.`;
+                }
+
+                set_team_formation_text(message);
+            }
+
+            function on_input(value) {
+                if (value === "") {
+                    value = 0;
+                }
+
+                teams_count = parseInt(value);
+                if (teams_count < 2) {
+                    set_error("Você precisa de ao menos 2 times.");
+                    set_team_formation_text("");
+                } else {
+                    set_error("");
+                    calculate_members_per_team();
+                }
+            }
+            teams_count_field.addEventListener("input", (e) => on_input(e.srcElement.value));
+            on_input(teams_count.toString());
+
+            back_btn.addEventListener("click", () => nav["back"]());
+            sort_btn.addEventListener("click", () => {
+                save(teams_count, LS_TEAMS_COUNT_KEY);
+                nav["next"]();
+            });
+
+            return page;
+        }
+
+        function init_formed_groups_page(nav) {
+            const page = document.querySelector("#formed_groups");
+            const teams_div = page.querySelector("#fg_teams");
+            const sort_again_btn = page.querySelector("#fg_sort_again");
+            const set_teams_btn = page.querySelector("#fg_teams_set");
+            const to_start_btn = page.querySelector("#fg_start");
+
+            function initialize_array(arr) {
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = [];
+                }
+            }
+
+            function isolate_members_per_skill() {
+                function get_member_skill_level(member) {
+                    let skill_level = member.split("*").length - 1
+                    if (skill_level < 0) {
+                        skill_level = 0;
+                    }
+                    return skill_level;
+                }
+                let max_skill_level = 0;
+                members.forEach(m => {
+                    const skill_level = get_member_skill_level(m);
+                    if (skill_level > max_skill_level) {
+                        max_skill_level = skill_level;
+                    }
+                })
+
+                const members_per_skill = new Array(max_skill_level + 1);
+                initialize_array(members_per_skill);
+                members.forEach(m => {
+                    const skill_level = get_member_skill_level(m);
+                    members_per_skill[skill_level].push(m.replaceAll("*", ""));
+                })
+
+                return members_per_skill;
+            }
+
+            function shuffle_members(members) {
+                const shuffled_members = [...members];
+                if (shuffled_members.length <= 1) {
+                    return shuffled_members;
+                } else if (shuffled_members.length === 2) {
+                    for (let i = 1; i < Math.floor(Math.random() * 20); i++) {
+                        const tmp = shuffled_members[0];
+                        shuffled_members[0] = shuffled_members[1];
+                        shuffled_members[1] = tmp;
+                    }
+                    return shuffled_members;
+                }
+
+                for (let i = 0; i < 5; i++) {
+                    for (let i = 0; i < shuffled_members.length; i++) {
+                        let rand_idx = i;
+                        let rand_idx_gen = 0;
+                        while (rand_idx === i || rand_idx_gen < 5) {
+                            rand_idx = Math.floor(Math.random() * shuffled_members.length);
+                            rand_idx_gen++;
+                        }
+                        const tmp = shuffled_members[i];
+                        shuffled_members[i] = shuffled_members[rand_idx];
+                        shuffled_members[rand_idx] = tmp;
+                    }
+                }
+                return shuffled_members;
+            }
+
+            function form_teams() {
+                const teams = new Array(teams_count);
+                for (let i = 0; i < teams_count; i++) {
+                    teams[i] = [];
+                }
+                const members_per_skill = isolate_members_per_skill();
+                let team_index = 0;
+                for (const skill_members of members_per_skill) {
+                    if (skill_members.length === 0) {
+                        continue;
+                    }
+
+                    const shuffled_members = shuffle_members(skill_members);
+                    while (shuffled_members.length > 0) {
+                        const member = shuffled_members.pop();
+                        teams[team_index++].push(member);
+                        if (team_index >= teams.length) {
+                            team_index = 0;
+                        }
+                    }
+                }
+                teams.forEach(t => t.sort());
+                return teams;
+            }
+
+            function print_teams() {
+                teams_div.innerHTML = "";
+                let team_index = 65;
+                for (const team of teams) {
+                    const team_letter = document.createElement("h2");
+                    team_letter.innerText = String.fromCharCode(team_index++);
+
+                    const members_list = document.createElement("ul");
+                    for (const member of team) {
+                        const member_entry = document.createElement("li");
+                        member_entry.innerText = member;
+                        members_list.appendChild(member_entry);
+                    }
+
+                    teams_div.append(team_letter, members_list);
+                }
+            }
+
+            function init() {
+                console.log(teams_count);
+                if (teams.length === 0) {
+                    // TODO salvar no storage account
+                    teams = form_teams();
+                    save(teams, LS_TEAMS_KEY);
+                }
+                print_teams();
+            }
+
+            page.init = init;
+
+            function reset_teams() {
+                // TODO limpar no storage account
+                unsave(LS_TEAMS_KEY);
+                teams = [];
+            }
+
+            sort_again_btn.addEventListener("click", () => {
+                reset_teams();
+                init();
+            })
+
+            set_teams_btn.addEventListener("click", () => {
+                reset_teams();
+                nav["back"]();
+            });
+            to_start_btn.addEventListener("click", () => {
+                reset_teams();
+                nav["home"]();
+            })
+
+
+            return page;
+        }
+
+        const LS_MEMBERS_KEY = "members";
+        const LS_TEAMS_COUNT_KEY = "teams_count";
+        const LS_TEAMS_KEY = "teams";
+
+        // TODO faça isso carregar do LocalStorage
+        let members = load(LS_MEMBERS_KEY) || [];
+
+        // TODO carregar do storage account
+        let teams_count = load(LS_TEAMS_COUNT_KEY) || 2;
+
+        // TODO carregar do storage account
+        let teams = load(LS_TEAMS_KEY) || [];
+
+        const teams_settings_page_nav = {};
+        const teams_settings_page = init_team_settings_page(teams_settings_page_nav);
+
+        const members_page_nav = {};
+        const members_page = init_members_page(members_page_nav);
+
+        const formed_groups_page_nav = {};
+        const formed_groups_page = init_formed_groups_page(formed_groups_page_nav);
+
+
+        members_page_nav["next"] = () => {
+            hide(members_page);
+            show(teams_settings_page);
+        }
+
+        teams_settings_page_nav["back"] = () => {
+            hide(teams_settings_page);
+            show(members_page);
+        }
+        teams_settings_page_nav["next"] = () => {
+            formed_groups_page.init();
+
+            hide(teams_settings_page);
+            show(formed_groups_page);
+        }
+
+        formed_groups_page_nav["back"] = () => {
+            hide(formed_groups_page);
+            show(teams_settings_page);
+        }
+        formed_groups_page_nav["home"] = () => {
+            hide(formed_groups_page);
+            show(members_page);
+        }
+
+        hide(members_page);
+        hide(teams_settings_page);
+        hide(formed_groups_page);
+
+        if (teams.length > 0) {
+            formed_groups_page.init();
+            show(formed_groups_page);
+        } else {
+            show(members_page);
+        }
+    })()
+</script>
